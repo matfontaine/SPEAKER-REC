@@ -1,0 +1,1702 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>IA715 - Télécom Paris</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/telecom.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/github.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<section class="cover" data-background="figures/background-no-te.jpg"  data-state="no-title-footer no-progressbar has-dark-background">
+
+					<h2 id='coverh2'>Introduction to Speaker Recognition</h2>
+					<h1  id='title_seminar'> IA715</h1>
+					<h3><a href="https://matfontaine.github.io/SPEAKER-REC", id='github_url'>matfontaine.github.io/SPEAKER-REC</a></h3>
+					<p id='coverauthors'>
+						Mathieu FONTAINE<br />
+						mathieu.fontaine@telecom-paris.fr
+					</p>
+					<p id="date">
+					10 Juin 2024
+					</p>
+					<p>
+					<img src="css/theme/img/logo-Telecom.svg" id="telecom" class="logo" alt="">
+					<aside class="notes">
+						<ul><li>On parlera d'abord historiquement des premiers modèles dans la première heure et demi</li>
+									<li>Egalement des différentes techniques qui permettent de discrimer des features de locuteurs</li>
+								<li>Dans la seconde partie, on parlera plutôt des techniques avec réseaux neuronaux</li>
+						</ul>
+					</aside>
+				</section>
+
+
+				<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+					<h2 id='coverh2'>I - General Introduction</h2>
+
+				</section>
+				<section>
+					<h1>What is Speaker Recognition ? </h1>
+					<ul>
+						<li>Speaker Recognition $\rightarrow$ identifying a speaker using their voice</li>
+						<li>It can be classified into two differents tasks</li>
+					</ul>
+					 
+					<!-- <h2>Speaker identification</h2>
+					Identify which voice in a group of known voices best matches the speaker
+					
+						<h2>Speaker verification</h2>
+						Accept or reject the identity claim of a speaker
+						
+
+				</ul>
+				<figure style="text-align:center; margin-top:0.5em;">
+				<img src="figures/images/SI_SR.png" width="80%">
+				<caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption>
+			</figure> -->
+			</section>
+
+			<section>
+				<h1>What is Speaker Recognition ? </h1>
+				<ul>
+					<li>Speaker Recognition $\rightarrow$ identifying a speaker using their voice</li>
+					<li>It can be classified into two differents tasks</li>
+				</ul>
+				 
+				<h2>Speaker identification</h2>
+				Identify which voice in a group of known voices best matches the speaker
+				
+					<!-- <h2>Speaker verification</h2>
+					Accept or reject the identity claim of a speaker -->
+					
+
+			</ul>
+			<!-- <figure style="text-align:center; margin-top:0.5em;">
+			<img src="figures/images/SI_SR.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption>
+		</figure> -->
+		</section>
+
+		<section>
+			<h1>What is Speaker Recognition ? </h1>
+			<ul>
+				<li>Speaker Recognition $\rightarrow$ identifying a speaker using their voice</li>
+				<li>It can be classified into two differents tasks</li>
+			</ul>
+			 
+			<h2>Speaker identification</h2>
+			Identify which voice in a group of known voices best matches the speaker
+			
+				<h2>Speaker verification</h2>
+				Accept or reject the identity claim of a speaker
+				
+
+		</ul>
+		<!-- <figure style="text-align:center; margin-top:0.5em;">
+		<img src="figures/images/SI_SR.png" width="80%">
+		<caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption>
+	</figure> -->
+	</section>
+
+		<section>
+			<h1>What is Speaker Recognition ? </h1>
+			<ul>
+				<li>Speaker Recognition $\rightarrow$ identifying a speaker using their voice</li>
+				<li>It can be classified into two differents tasks</li>
+			</ul>
+			 
+			<h2>Speaker identification</h2>
+			Identify which voice in a group of known voices best matches the speaker
+			
+				<h2>Speaker verification</h2>
+				Accept or reject the identity claim of a speaker
+				
+
+		</ul>
+		<figure style="text-align:center; margin-top:0.5em;">
+		<img src="figures/images/SI_SR.png" width="80%">
+		<caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption>
+	</figure>
+	</section>
+
+			<section>
+				<h1>Use cases of speaker recognition</h1>
+				<div class="affirmation">What are the uses of speaker recognition?</div>
+			</section>
+
+			<section>
+				<h1>Use cases of speaker recognition</h1>
+				<ul>
+					<li>Authentification ("OK Google" etc.)</li>
+					<!-- <li>Personnalized speech enhancement (isolate only one speaker in a conversation)</li>
+					<li>Speaker diarization (knows "who speak and when ?")</li>
+					<li>Automatic speech recognition (after SD, retranscription of a meeting)</li> -->
+				</ul>
+				<div class="affirmation">What are the uses of speaker recognition?</div>
+			</section>
+			<section>
+				<h1>Use cases of speaker recognition</h1>
+				<ul>
+					<li>Authentification ("OK Google" etc.)</li>
+					<li>Personnalized speech enhancement (isolate only one speaker in a conversation)</li>
+					<!-- <li>Speaker diarization (knows "who speak and when ?")</li>
+					<li>Automatic speech recognition (after SD, retranscription of a meeting)</li> -->
+				</ul>
+				<div class="affirmation">What are the uses of speaker recognition?</div>
+			</section>
+
+				<section>
+					<h1>Use cases of speaker recognition</h1>
+					<ul>
+						<li>Authentification ("OK Google" etc.)</li>
+						<li>Personnalized speech enhancement (isolate only one speaker in a conversation)</li>
+						<li>Speaker diarization (knows "who speak and when ?")</li>
+						<!-- <li>Automatic speech recognition (after SD, retranscription of a meeting)</li> -->
+					</ul>
+					<div class="affirmation">What are the uses of speaker recognition?</div>
+				</section>
+
+					<section>
+						<h1>Use cases of speaker recognition</h1>
+						<ul>
+							<li>Authentification ("OK Google" etc.)</li>
+							<li>Personnalized speech enhancement (isolate only one speaker in a conversation)</li>
+							<li>Speaker diarization (knows "who speak and when ?")</li>
+							<li>Automatic speech recognition (after SD, retranscription of a meeting)</li>
+						</ul>
+						<div class="affirmation">What are the uses of speaker recognition?</div>
+					</section>
+					<section>
+						<h1>Use cases of speaker recognition</h1>
+						<ul>
+							<li>Authentification ("OK Google" etc.)</li>
+							<li>Personnalized speech enhancement (isolate only one speaker in a conversation)</li>
+							<li>Speaker diarization (knows "who speak and when ?")</li>
+							<li>Automatic speech recognition (after SD, retranscription of a meeting)</li>
+						</ul>
+						<div class="affirmation">What are the uses of speaker recognition?</div>
+						<div class="remarque">What are the main difficulties of the task ?</div>
+					</section>
+					<section>
+						<h1>Difficulties of the task</h1>
+						<ul>
+							<li>Acoustic environment variabilities</li>
+							<!-- <li>Variability of speakers</li>
+							<li>rare language = not so much data</li>
+							<li>privacy and ethical considerations</li> -->
+						</ul>
+					</section>
+
+					<section>
+						<h1>Difficulties of the task</h1>
+						<ul>
+							<li>Acoustic environment variabilities</li>
+							<li>Variability of speakers</li>
+							<!-- <li>rare language = not so much data</li>
+							<li>privacy and ethical considerations</li> -->
+						</ul>
+					</section>
+
+					<section>
+						<h1>Difficulties of the task</h1>
+						<ul>
+							<li>Acoustic environment variabilities</li>
+							<li>Variability of speakers</li>
+							<li>rare language = not so much data</li>
+							<!-- <li>privacy and ethical considerations</li> -->
+						</ul>
+					</section>
+
+					<section>
+						<h1>Difficulties of the task</h1>
+						<ul>
+							<li>Acoustic environment variabilities</li>
+							<li>Variability of speakers</li>
+							<li>rare language = not so much data</li>
+							<li>privacy and ethical considerations</li>
+						</ul>
+					</section>
+
+					<section>
+						<h1>Chronology</h1>
+						<figure style="text-align:center; margin-top:0.5em;">
+							<img src="figures/images/chronology_Speaker_recognition.png" width="90%">
+							<caption><span style="font-style: oblique;"><br>Rough Chronology about speaker recognitions systems</span></caption>
+						</figure>
+		
+						<div class="references" style="margin-top:1em;">
+							<ul>
+								<li>Campbell, J. P. <span style="font-style: oblique;"> Speaker recognition: A tutorial. </span> Proceedings of the IEEE (1997)</li>
+								<li>Kinnunen, T., et al. <span style="font-style: oblique;"> An overview of text-independent speaker recognition: From features to supervectors.</span> Speech communication (2010)</li>
+								<li>Bai, Z., et al. <span style="font-style: oblique;">  Speaker recognition based on deep learning: An overview.</span> Neural Networks (2021)</li>
+							</ul>
+						</div>
+					</section>
+		
+				<!-- Outline of the presentation -->
+				<section>
+					<h1> Outline</h1>
+					<h2>I - General Introduction</h2>
+					<h2>II - Classification of features</h2>
+					<h3>II 1 - Linear discriminant Analysis (LDA)</h3>
+					<h3>II 2 - Probabilistic Linear Discriminant Analysis (PLDA)</h3>
+					<h2>III - Statistical Acoustic feature</h2>
+					<h3>III 1 - i-vectors </h3>
+					<h2>IV - Neural Acoustic features</h2>
+					<h3>IV 1 - X-vectors</h3>
+					<h3>IV 2 - R-vectors</h3>
+					<h3>IV 3 - ECAPA-TDNN</h3>
+					<h2>V - Conclusion</h2>
+				</section>
+
+				<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+					<h2 id='coverh2'>II 1 - Linear discriminant Analysis (LDA)</h2>
+
+				</section>
+				<section>
+					<h1>Outline</h1>
+					<ul>
+						<li>PCA is unsupervised </li>
+						<li>PCA focuses only on variance (may be not relevant)</li>
+						<li>PCA represents a data with variance in lower dimension</li>
+						<li>for classification problem, we aim more to discrimate data</li>
+					</ul>
+					<!-- <div class="remarque">LDA is supervised dimensional reduction approach.
+						For speakers recognition, we can assume we have a lot of supervised data.
+					</div> -->
+				</section>
+
+				<section>
+					<h1>Outline</h1>
+					<ul>
+						<li>PCA is unsupervised </li>
+						<li>PCA focuses only on variance (may be not relevant)</li>
+						<li>PCA represents a data with variance in lower dimension</li>
+						<li>for classification problem, we aim more to discrimate data</li>
+					</ul>
+					<div class="remarque">LDA is a supervised dimensional reduction approach.
+						For speakers recognition, we can assume we have a lot of supervised data.
+					</div>
+				</section>
+
+				<section>
+					<h1>Problem formulation for two classes</h1>
+					Let $\bold{x}_1, \dots, \bold{x}_n \in \mathbb{R}^d$ be some training data points and two classes
+					 $\mathcal{C}_1, \mathcal{C}_2$
+					 <figure style="text-align:center; margin-top:0.5em;">
+						<img src="figures/images/2C_LDA.png" width="40%">
+						<!-- <caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption> -->
+					</figure>
+					 <div class="remarque">We aim to find a (unit-vector)  that "best" discriminates between $\mathcal{C}_1$ and  $\mathcal{C}_2$</div>
+					 
+				</section>
+
+				<section>
+					<h1>Mathematical formulation</h1>
+					<ul>
+						<li>Consider a unit vector $\bold{v} \in \mathbb{R}^d$</li>
+						<li>we focus on lines that pass through the origin</li>
+						<li>The 1D projections of the points are $\forall i \in \llbracket 1,n \rrbracket$:
+							<center>$$
+							a_i = \bold{v}^{\top}\bold{x}_i
+							$$
+						</center>
+						</li>
+						<li>Those 1D projections also carry the label of the original data</li>
+					</ul>
+					<figure style="text-align:center; margin-top:0.5em;">
+						<img src="figures/images/2C_Math_LDA.png" width="40%">
+						<!-- <caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption> -->
+					</figure>
+				</section>
+
+
+				<section>
+					<h1>Mathematical formulation</h1>
+					<ul>
+						<li>Consider a unit vector $\bold{v} \in \mathbb{R}^d$</li>
+						<li>we focus on lines that pass through the origin</li>
+						<li>The 1D projections of the points are $\forall i \in \llbracket 1,n \rrbracket$:
+							<center>$$
+							a_i = \bold{v}^{\top}\bold{x}_i
+							$$
+						</center>
+						</li>
+						<li>Those 1D projections also carry the label of the original data</li>
+					</ul>
+					<figure style="text-align:center; margin-top:0.5em;">
+						<img src="figures/images/2C_Math_LDA.png" width="40%">
+						<!-- <caption><span style="font-style: oblique;"><br>Speaker Identification vs. Speaker Verification</span></caption> -->
+					</figure>
+					<div class="affirmation" style="margin-top:0.2em;">How do we quantify the separation between two classes ?</div>
+				</section>
+
+				<section>
+					<h1>Problem to solve</h1>
+					<ul>
+						<li> Goal: projected classes that have <b>faraway means</b> and <b>small variances</b> </li>
+						<li>Can be achieved through te following optimization problem:
+							<center style="margin-top:0.5em; margin-bottom:0.5em;">
+								$$
+								\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{(\mu_1 - \mu_2)^2}{s_1^2 + s_2^2} \quad\quad (1)
+								$$
+							</center>
+							$\quad \rightarrow \mu_i  
+							\triangleq \bold{v}^\top\bold{m}_i
+							 \triangleq  
+							 \bold{v}^\top \left(\frac{1}{n_i}
+							 \sum_{\bold{x}_j \in \mathcal{C}_i}\bold{x}_j \right) \quad \texttt{(mean of the ith class)}$
+							$\\ \quad \rightarrow s_i^2 \triangleq \sum_{\bold{x}_j \in \mathcal{C}_i}(a_j-\mu_i)^2 \qquad \quad~~ \texttt{(variance of the ith class)}$
+						</li>
+						</ul>
+				</section>
+
+				<section>
+					<h1>Problem to solve</h1>
+					<ul>
+						<li> Goal: projected classes that have <b>faraway means</b> and <b>small variances</b> </li>
+						<li>Can be achieved through te following optimization problem:
+							<center style="margin-top:0.5em; margin-bottom:0.5em;">
+								$$
+								\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{(\mu_1 - \mu_2)^2}{s_1^2 + s_2^2} \quad\quad (1)
+								$$
+							</center>
+							$\quad \rightarrow \mu_i  
+							\triangleq \bold{v}^\top\bold{m}_i
+							 \triangleq  
+							 \bold{v}^\top \left(\frac{1}{n_i}
+							 \sum_{\bold{x}_j \in \mathcal{C}_i}\bold{x}_j \right) \quad \texttt{(mean of the ith class)}$
+							$\\ \quad \rightarrow s_i^2 \triangleq \sum_{\bold{x}_j \in \mathcal{C}_i}(a_j-\mu_i)^2 \qquad \quad~~ \texttt{(variance of the ith class)}$
+						</li>
+						<li>
+						 By developping Eq.$~(1)$, it can be shown that the problem is equivalent to:
+						
+						 <center style="margin-top:0.5em; margin-bottom:0.5em;">
+							$$
+							\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\bold{v}^\top\bold{S}_b\bold{v}}{\bold{v}^\top\bold{S}_w\bold{v}} \quad\quad\quad (2)
+							$$
+						</center>
+
+						$\quad \rightarrow \bold{S}_b 
+						\triangleq (\bold{m}_1 - \bold{m}_2)(\bold{m}_1 - \bold{m}_2)^\top \in \mathbb{R}^{d \times d} \\$
+						$\quad \rightarrow \bold{S}_w 
+						\triangleq \sum_{i=1}^{2}\sum_{\bold{x}_j \in \mathcal{C}_i}(\bold{x}_j - \bold{m}_i)(\bold{x}_j - \bold{m}_i)^\top \in \mathbb{R}^{d \times d}$
+					</li>
+					</ul>
+					 <!-- <div class="remarque" style="margin-top:0.5em;">$\bold{S}_b, \bold{S}_w$ are called the
+						 <b>between-class scatter matrix</b>
+						   and the <b>total within-lass scatter matrix</b> respectively </div> -->
+				</section>
+				<section>
+					<h1>Problem to solve</h1>
+					<ul>
+						<li> Goal: projected classes that have <b>faraway means</b> and <b>small variances</b> </li>
+						<li>Can be achieved through te following optimization problem:
+							<center style="margin-top:0.5em; margin-bottom:0.5em;">
+								$$
+								\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{(\mu_1 - \mu_2)^2}{s_1^2 + s_2^2} \quad\quad (1)
+								$$
+							</center>
+							$\quad \rightarrow \mu_i  
+							\triangleq \bold{v}^\top\bold{m}_i
+							 \triangleq  
+							 \bold{v}^\top \left(\frac{1}{n_i}
+							 \sum_{\bold{x}_j \in \mathcal{C}_i}\bold{x}_j \right) \quad \texttt{(mean of the ith class)}$
+							$\\ \quad \rightarrow s_i^2 \triangleq \sum_{\bold{x}_j \in \mathcal{C}_i}(a_j-\mu_i)^2 \qquad \quad~~ \texttt{(variance of the ith class)}$
+						</li>
+						<li>
+						 By developping Eq.$~(1)$, it can be shown that the problem is equivalent to:
+						
+						 <center style="margin-top:0.5em; margin-bottom:0.5em;">
+							$$
+							\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\bold{v}^\top\bold{S}_b\bold{v}}{\bold{v}^\top\bold{S}_w\bold{v}} \quad\quad\quad (2)
+							$$
+						</center>
+
+						$\quad \rightarrow \bold{S}_b 
+						\triangleq (\bold{m}_1 - \bold{m}_2)(\bold{m}_1 - \bold{m}_2)^\top \in \mathbb{R}^{d \times d} \\$
+						$\quad \rightarrow \bold{S}_w 
+						\triangleq \sum_{i=1}^{2}\sum_{\bold{x}_j \in \mathcal{C}_i}(\bold{x}_j - \bold{m}_i)(\bold{x}_j - \bold{m}_i)^\top \in \mathbb{R}^{d \times d}$
+					</li>
+					</ul>
+					 <div class="remarque" style="margin-top:0.5em;">$\bold{S}_b, \bold{S}_w$ are called the
+						 <b>between-class scatter matrix</b>
+						   and the <b>total within-lass scatter matrix</b> respectively </div>
+				</section>
+
+				<section>
+					<h1>An eigenvalue problem</h1>
+					<div class="exemple" style="margin-bottom:1em;"> 
+						<div id="title"> Theorem [solution to $(2)$]</div>
+						Suppose that $\bold{S}_w$  is nonsingular. The maximizer is given 
+						by the largest eigenvector $\bold{v}_1$ of $\bold{S}_w^{-1}\bold{S}_b$ i.e., 
+						<center>
+							$$
+							\bold{S}_w^{-1}\bold{S}_b\bold{v}_1 = \lambda_1 \bold{v}_1
+							$$
+						</center>
+
+					</div>
+					<b>Remark</b>: $\mathrm{Rank}(\bold{S}_w^{-1}\bold{S}_b) = \mathrm{Rank}(\bold{S}_b) = 1$, so $\lambda_1$ is the only nonzero (positive) eigenvalue that can be found.
+				</section>
+
+				<section>
+					<h1>An eigenvalue problem</h1>
+					<div class="exemple" style="margin-bottom:1em;"> 
+						<div id="title"> Theorem [solution to $(2)$]</div>
+						Suppose that $\bold{S}_w$  is nonsingular. The maximizer is given 
+						by the largest eigenvector $\bold{v}_1$ of $\bold{S}_w^{-1}\bold{S}_b$ i.e., 
+						<center>
+							$$
+							\bold{S}_w^{-1}\bold{S}_b\bold{v}_1 = \lambda_1 \bold{v}_1
+							$$
+						</center>
+
+					</div>
+					<b>Remark</b>: $\mathrm{Rank}(\bold{S}_w^{-1}\bold{S}_b) = \mathrm{Rank}(\bold{S}_b) = 1$, so $\lambda_1$ is the only nonzero (positive) eigenvalue that can be found.
+					<div class="exemple" style="margin-bottom:1em;"> 
+						<div id="title"> Naïve 2-LDA algorithm</div>
+						<ul>
+							<li>invert $\bold{S}_w \in \mathbb{R}^{d \times d}$ matrix</li>
+							<li>compute $\bold{S}_w^{-1}\bold{S}_b$</li>
+							<li>solve the eigenvalue problem $\bold{S}_w^{-1}\bold{S}_b\bold{v}_1 = \lambda_1 \bold{v}_1$</li>
+						</ul>
+				
+				</section>
+
+				<section>
+					<h1>An eigenvalue problem</h1>
+					<div class="exemple" style="margin-bottom:1em;"> 
+						<div id="title"> Theorem [solution to $(2)$]</div>
+						Suppose that $\bold{S}_w$  is nonsingular. The maximizer is given 
+						by the largest eigenvector $\bold{v}_1$ of $\bold{S}_w^{-1}\bold{S}_b$ i.e., 
+						<center>
+							$$
+							\bold{S}_w^{-1}\bold{S}_b\bold{v}_1 = \lambda_1 \bold{v}_1
+							$$
+						</center>
+
+					</div>
+					<b>Remark</b>: $\mathrm{Rank}(\bold{S}_w^{-1}\bold{S}_b) = \mathrm{Rank}(\bold{S}_b) = 1$, so $\lambda_1$ is the only nonzero (positive) eigenvalue that can be found.
+					<div class="exemple" style="margin-bottom:1em;"> 
+						<div id="title"> Naïve 2-LDA algorithm</div>
+						<ul>
+							<li>invert $\bold{S}_w \in \mathbb{R}^{d \times d}$ matrix</li>
+							<li>compute $\bold{S}_w^{-1}\bold{S}_b$</li>
+							<li>solve the eigenvalue problem $\bold{S}_w^{-1}\bold{S}_b\bold{v}_1 = \lambda_1 \bold{v}_1$</li>
+						</ul>
+					</div>
+						<div class="affirmation">Can we find a smartest way to reduce the computational complexity ?</div>
+
+				</section>
+
+				<section>
+					<h1>Solution reformulation</h1>
+					We can see that: 
+					<center>
+					$$
+					\begin{aligned}
+					\lambda_1 \mathbf{v}_1 & =\mathbf{S}_w^{-1} \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)\left(\mathbf{m}_1-\mathbf{m}_2\right)^T}_{\mathbf{S}_b} \mathbf{v}_1 \\
+					& =\mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right) \cdot \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)^T \mathbf{v}_1}_{\text {scalar }}
+					\end{aligned}
+					$$
+				</center>
+				Meaning that:
+				<center>
+				$$
+				\bold{v}_1 \propto \mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right)
+				$$
+			</center>
+
+				</section>
+
+				<section>
+					<h1>Solution reformulation</h1>
+					We can see that: 
+					<center>
+					$$
+					\begin{aligned}
+					\lambda_1 \mathbf{v}_1 & =\mathbf{S}_w^{-1} \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)\left(\mathbf{m}_1-\mathbf{m}_2\right)^T}_{\mathbf{S}_b} \mathbf{v}_1 \\
+					& =\mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right) \cdot \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)^T \mathbf{v}_1}_{\text {scalar }}
+					\end{aligned}
+					$$
+				</center>
+				Meaning that:
+				<center>
+				$$
+				\bold{v}_1 \propto \mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right)
+				$$
+			</center>
+			<div class="affirmation">We just need to compute $\mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right)$ and rescale</div>
+
+				</section>
+
+				
+				<section>
+					<h1>Solution reformulation</h1>
+					We can see that: 
+					<center>
+					$$
+					\begin{aligned}
+					\lambda_1 \mathbf{v}_1 & =\mathbf{S}_w^{-1} \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)\left(\mathbf{m}_1-\mathbf{m}_2\right)^T}_{\mathbf{S}_b} \mathbf{v}_1 \\
+					& =\mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right) \cdot \underbrace{\left(\mathbf{m}_1-\mathbf{m}_2\right)^T \mathbf{v}_1}_{\text {scalar }}
+					\end{aligned}
+					$$
+				</center>
+				Meaning that:
+				<center>
+				$$
+				\bold{v}_1 \propto \mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right)
+				$$
+			</center>
+			<div class="affirmation">We just need to compute $\mathbf{S}_w^{-1}\left(\mathbf{m}_1-\mathbf{m}_2\right)$ and rescale</div>
+			<div class="exemple" style="margin-top:1em;"> 
+				<div id="title"> Improved 2-LDA algorithm</div>
+				<ul>
+					<li>compute $\bold{m_1}, \bold{m_2}$ and $\bold{S}_w$</li>
+					<li>solve $\bold{S}_w \bold{v}_1 = (\bold{m_1} - \bold{m_2)}$ (use $\texttt{np.linalg.solve}$)</li>
+					<li>get $\bold{v}_{\text{Norm}} = \bold{v}_1 / \|\bold{v}_1\|$</li>
+				</ul>
+			</div>
+				</section>
+
+		<section>
+			<h1>Toy example</h1>
+			<ul>
+				<li>Consider $X=[[[1, 2], [2, 3], [3, 5], [2, 1], [3, 2], [4, 4.2]]]$ and classes $y=[0,0,0,1,1,1]$</li>
+				<li>Then we get:</li>
+				<figure style="text-align:center; margin-top:0.5em;">
+					<img src="figures/images/2C_LDA_results.png" width="70%">
+					<caption><span style="font-style: oblique;"><br>Projection results using LDA</span></caption>
+				</figure>
+			</ul>
+		</section>
+
+		<section>
+			<h1>Multi class LDA</h1>
+			<div class="remarque"> How we can generalize to multiclass ?</div>
+		</section>
+
+		<section>
+			<h1>Multi class LDA</h1>
+			We consider $J$ classes. <br>
+			<ul>
+				<li>each class should be as tight as possible</li>
+				<li>their centroids are as far from each other as possible</li>
+			</ul>
+			<div class="affirmation">This can be represented by $\bold{S}_{w} = \sum_{j=1}^{J}\bold{S}_j$ and $\bold{S}_b$ the total within and between covariance-class matrices respectively </div>
+		</section>
+
+		<section>
+			<h1>Multi class LDA</h1>
+			We consider $J$ classes. <br>
+			<ul>
+				<li>each class should be as tight as possible</li>
+				<li>their centroids are as far from each other as possible</li>
+			</ul>
+			<div class="affirmation" style="margin-bottom:1em;">This can be represented by $\bold{S}_{w} = \sum_{j=1}^{J}\bold{S}_j$ and $\bold{S}_b$ the total within and between covariance-class matrices respectively </div>
+			<ul>
+				<li>${\color{green}\bold{S}_{w} = \sum_{j=1}^{J}\bold{S}_j =\sum_{j=1}^{J}\sum_{\bold{x} \in \mathcal{C}_j}(\bold{x} - \bold{m}_j)(\bold{x} - \bold{m}_j)^\top \quad \quad \checkmark}$
+					<br>
+					$\quad \rightarrow$ this part describes the tightness of the projected classes
+
+
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h1>Multi class LDA</h1>
+			We consider $J$ classes. <br>
+			<ul>
+				<li>each class should be as tight as possible</li>
+				<li>their centroids are as far from each other as possible</li>
+			</ul>
+			<div class="affirmation" style="margin-bottom:1em;">This can be represented by $\bold{S}_{w} = \sum_{j=1}^{J}\bold{S}_j$ and $\bold{S}_b$ the total within and between covariance-class matrices respectively </div>
+			<ul>
+				<li>${\color{green}\bold{S}_{w} = \sum_{j=1}^{J}\bold{S}_j =\sum_{j=1}^{J}\sum_{\bold{x} \in \mathcal{C}_j}(\bold{x} - \bold{m}_j)(\bold{x} - \bold{m}_j)^\top \quad \quad \checkmark}$
+					<br>
+					$\quad \rightarrow$ this part describes the tightness of the projected classes
+
+
+				</li>
+			</ul>
+			<div class="remarque"> What about the second condition ?</div>
+
+		</section>
+		<section>
+			<h1>Between class scatter matrice</h1>
+			<ul>
+				<li>For the class centroids $\mu_j$ as far from each other as possible we can maximize the variance of the centroids set.</li>
+		</section>
+
+		<section>
+			<h1>Between class scatter matrice</h1>
+			<ul>
+				<li>For the class centroids $\mu_j$ as far from each other as possible we can maximize the variance of the centroids set.</li>
+				<li>It can be shown however that we lack of geometrical interpretation</li>
+		</section>
+
+		<section>
+			<h1>Between class scatter matrice</h1>
+			<ul>
+				<li>For the class centroids $\mu_j$ as far from each other as possible we can maximize the variance of the centroids set.</li>
+				<li>It can be shown however that we lack of geometrical interpretation</li>
+				<li>Instead a weighted mean $\mu = n^{-1} \sum_{j=1}^{J}n_j\mu_j$ of the $\mu_j$ is equal to $\bold{v}^\top \bold{m}$ where $\bold{m} = n^{-1}\sum_{i=1}^{n}\bold{x}_i$ is the global centroid of the data and $n_j$ the cardinal of $\mathcal{C}_j$.</li>
+							<figure style="text-align:center; margin-top:0.5em;">
+					<img src="figures/images/Sb_multi_LDA.png" width="40%">
+					<!-- <caption><span style="font-style: oblique;"><br>Projection results using LDA</span></caption> -->
+				</figure>
+			</ul>
+			<!-- <div class="affirmation" style="margin-top:-0.1em;">The second condition will be then to maximize $\sum_{j=1}^{J}n_j(\mu_j - \mu)^2$ </div> -->
+		</section>
+		<section>
+			<h1>Between class scatter matrice</h1>
+			<ul>
+				<li>For the class centroids $\mu_j$ as far from each other as possible we can maximize the variance of the centroids set.</li>
+				<li>It can be shown however that we lack of geometrical interpretation</li>
+				<li>Instead a weighted mean $\mu = n^{-1} \sum_{j=1}^{J}n_j\mu_j$ of the $\mu_j$ is equal to $\bold{v}^\top \bold{m}$ where $\bold{m} = n^{-1}\sum_{i=1}^{n}\bold{x}_i$ is the global centroid of the data and $n_j$ the cardinal of $\mathcal{C}_j$.</li>
+							<figure style="text-align:center; margin-top:0.5em;">
+					<img src="figures/images/Sb_multi_LDA.png" width="40%">
+					<!-- <caption><span style="font-style: oblique;"><br>Projection results using LDA</span></caption> -->
+				</figure>
+			</ul>
+			<div class="affirmation" style="margin-top:-0.1em;">The second condition will be then to maximize $\sum_{j=1}^{J}n_j(\mu_j - \mu)^2$ </div>
+		</section>
+		<section>
+			<h1>Problem formulation for the multi-class LDA</h1>
+			After simplification, we get:
+			<center>
+				$$
+				\sum_{j=1}^{J}n_j(\mu_j - \mu)^2 = \bold{v}^\top\bold{S}_b\bold{v}
+				$$
+			</center>
+			where $\bold{S}_b = \sum_{j=1}^{J} n_j(\bold{m}_j - \bold{m})(\bold{m}_j - \bold{m})^\top$
+		</section>
+
+		<section>
+			<h1>Problem formulation for the multi-class LDA</h1>
+			After simplification, we get:
+			<center>
+				$$
+				\sum_{j=1}^{J}n_j(\mu_j - \mu)^2 = \bold{v}^\top\bold{S}_b\bold{v}
+				$$
+			</center>
+			where $\bold{S}_b = \sum_{j=1}^{J} n_j(\bold{m}_j - \bold{m})(\bold{m}_j - \bold{m})^\top$
+		<p>
+			We finally get the same kind of problem to solve:
+			<center style="margin-top:0.5em; margin-bottom:0.5em;">
+				$$
+				\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\sum_j n_j(\mu_j - \mu)^2}{\sum s_j^2}
+				 = 	\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\bold{v}^\top\bold{S}_b\bold{v}}{\bold{v}^\top\bold{S}_w\bold{v}} \quad\quad\quad (3)$$
+			</center>
+		</p>
+	</section>
+
+	<section>
+		<h1>Problem formulation for the multi-class LDA</h1>
+		After simplification, we get:
+		<center>
+			$$
+			\sum_{j=1}^{J}n_j(\mu_j - \mu)^2 = \bold{v}^\top\bold{S}_b\bold{v}
+			$$
+		</center>
+		where $\bold{S}_b = \sum_{j=1}^{J} n_j(\bold{m}_j - \bold{m})(\bold{m}_j - \bold{m})^\top$
+	<p>
+		We finally get the same kind of problem to solve:
+		<center style="margin-top:0.5em; margin-bottom:0.5em;">
+			$$
+			\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\sum_j n_j(\mu_j - \mu)^2}{\sum s_j^2}
+			 = 	\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\bold{v}^\top\bold{S}_b\bold{v}}{\bold{v}^\top\bold{S}_w\bold{v}} \quad\quad\quad (3)$$
+		</center>
+	</p>
+	<b>Remark:</b> Because of
+	<center>$$
+	\lambda_1 \mathbf{v}_1=\mathbf{S}_w^{-1} \mathbf{S}_b \mathbf{v}_1=\mathbf{S}_w^{-1} \sum_j n_j\left(\mathbf{m}_j-\mathbf{m}\right) \underbrace{\left(\mathbf{m}_j-\mathbf{m}\right)^T \mathbf{v}_1}_{\text {scalar }}
+	$$</center>
+	We cannot use the formula $\bold{v}_1 \propto \mathbf{S}_w^{-1}(\bold{m}_1 - \bold{m}_2)$
+</section>
+
+
+
+		<section>
+			<h1>Problem formulation for the multi-class LDA</h1>
+			After simplification, we get:
+			<center>
+				$$
+				\sum_{j=1}^{J}n_j(\mu_j - \mu)^2 = \bold{v}^\top\bold{S}_b\bold{v}
+				$$
+			</center>
+			where $\bold{S}_b = \sum_{j=1}^{J} n_j(\bold{m}_j - \bold{m})(\bold{m}_j - \bold{m})^\top$
+		<p>
+			We finally get the same kind of problem to solve:
+			<center style="margin-top:0.5em; margin-bottom:0.5em;">
+				$$
+				\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\sum_j n_j(\mu_j - \mu)^2}{\sum s_j^2}
+				 = 	\underset{\bold{v}:\|\bold{v}\|=1}{\max} \frac{\bold{v}^\top\bold{S}_b\bold{v}}{\bold{v}^\top\bold{S}_w\bold{v}} \quad\quad\quad (3)$$
+			</center>
+		</p>
+		<b>Remark:</b> Because of
+		<center>$$
+		\lambda_1 \mathbf{v}_1=\mathbf{S}_w^{-1} \mathbf{S}_b \mathbf{v}_1=\mathbf{S}_w^{-1} \sum_j n_j\left(\mathbf{m}_j-\mathbf{m}\right) \underbrace{\left(\mathbf{m}_j-\mathbf{m}\right)^T \mathbf{v}_1}_{\text {scalar }}
+		$$</center>
+		We cannot use the formula $\bold{v}_1 \propto \mathbf{S}_w^{-1}(\bold{m}_1 - \bold{m}_2)$
+		<div class="affirmation" style="margin-top:0.3em;">
+			Then we solve
+				$
+				\mathbf{S}_b \mathbf{v}=\lambda_1 \mathbf{S}_w \mathbf{v}$
+				 where the max eigenvectors are discriminatory directions.
+				
+		</div>
+	</section>
+
+	<section>
+		<h1>Others informations + multi-LDA algorithm</h1>
+		It can be shown that: <br>
+		<ul>
+			<li>$\mathrm{rank}(\bold{S}_b) \leq J-1$ so we cannot only find $J-1$ discriminatory dir.</li>
+			<li>For $d$ large, the centered data may not fully span all $d$ dimensions thus $\mathrm{rank}(\bold{S}_w) < d$ (i.e. singularity problem) 
+				$\\ \quad \rightarrow$ In practice, we do a first dimension reduction (PCA, TSNE, DbSCAN etc.)
+			</li>
+		</ul>
+
+		<div class="exemple" style="margin-bottom:1em;"> 
+			<div id="title"> multi-LDA algorithm</div>
+			<ul>
+				<li>dimension reduction using PCA resulting in $\bold{Y}_{\text{PCA}}, \bold{X}_{\text{PCA}}$</li>
+				<li>solve the problem $(\bold{S}_w + \beta \bold{I}_{d})^{\dagger}\bold{S}_b\bold{v} = \lambda \bold{v}$</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>II 2 - Probabilistic Linear Discriminant Analysis (PLDA)</h2>
+
+	</section>
+	<section>
+		<h1>Probabilistic modelization</h1>
+		<ul>
+			<li>We aim to represent the data as a sum of separated gaussian (GMM):
+				<center>
+					$$
+					p(\bold{x}) = \sum_{k=1}^{K}\pi_k\mathcal{N}(\bold{x} \mid \bold{m}_{k}, \bold{\Phi}_k)
+					$$
+				</center>
+			</li>
+			<li>We consider $\bold{x}$ a data sample, $\bold{y}$ the mean of a class in the GMM model.
+				 The probability density function $p(\bold{x} \mid \bold{y})$ is thus given by:
+				<center>
+					$$
+					p(\bold{x} \mid \bold{y}) = \mathcal{N}(\bold{x} \mid \bold{y}, \bold{\Phi}_w)
+					$$
+				</center>
+				$\quad\rightarrow$ if we know the class parameters of Gaussian, we can generate samples of this class.
+				</li>
+			<li>
+				LDA can be shown to be a GMM  where the prior on $\bold{y}$ is:
+				<center>
+					$$
+					p(\bold{y}) = \sum_{k=1}^{K} \pi_{k}\delta({\bold{y} - \bold{m}_{k}})
+					$$
+				</center>
+			</li>
+			<li>maximizing the likelihood of this model wrt. $\{\pi_k, \bold{m}_k, \Phi_w\}$ provides classic LDA. </li>
+		</ul>
+		<div class="remarque">Thus, $\bold{y}$ is discrete in LDA. 
+			We want to modify the prior to make it continuous (and then deal with classes not seen during training)</div>
+	</section>
+
+	<section>
+		<h1>Formulation of PLDA (1/2)</h1>
+		<ul>
+			<li>We assume a Gaussian prior on $\bold{y}$:
+				<center>
+					$$
+					p(\bold{y}) = \mathcal{N}(\bold{y} \mid \bold{m}, \bold{\Phi}_b)
+					$$
+				</center>
+				<div class="affirmation" style="margin-bottom:0.9em;">The latent variable $\bold{y}$ for each class can be generated using 
+				the Gaussian distribution with mean $\bold{m}$ and between-class covariance $\bold{\Phi}_b$.</div>
+			</li>
+			<li>
+				Goal of PLDA: project data samples to a latent space where samples from same class are modeled using same distribution.
+			</li>
+		</ul>
+	We can make use of the following theorem:
+	<div class="exemple" style="margin-bottom:1em;"> 
+		<div id="title"> Joint diagonalization</div>
+		If $\bold{\Phi}_b, \bold{\Phi}_w$ are positive semi-definite
+		 and positive definites matrices respectively,
+		then it exists a matrix $\bold{V}$ that jointly diagonalizes $\bold{\Phi}_b$ and  $\bold{\Phi}_w$ as follows:
+		<center>
+		$$
+		\begin{aligned}
+		\bold{V}^\top\bold{\Phi}_w\bold{V} &= \bold{I}_d \\
+		\bold{V}^\top\bold{\Phi}_b\bold{V} &= \bold{D}
+		\end{aligned}
+		$$
+	</center>
+	where $\bold{I}_d$ is the identity matrix and $\bold{D}$ a diagonal matrix. With $\bold{A} = (\bold{V}^\top)^{-1}$ we get:
+<center>
+		$$\bold{\Phi}_w = \bold{A}\bold{A}^\top,\quad
+		\bold{\Phi}_b = \bold{A}\bold{D}\bold{A}^\top $$
+	</center>
+	</div>
+	</section>
+	<section>
+		<h1>Formulation of PLDA (2/2)</h1>
+		Consequently, the PLDA model is defined as
+		<center>
+		$$
+		\begin{aligned}
+		\bold{y} &= \bold{m} + \bold{A}\bold{v} \\
+		\bold{x} &= \bold{m} + \bold{A}\bold{u} \\
+		\bold{u} &\sim \mathcal{N}(\bold{v}, \bold{I}_d) \\
+		\bold{v} &\sim \mathcal{N}(\bold{0}, \bold{D})
+		\end{aligned}
+		$$</center>
+
+	<ul>
+		<li>$\bold{u}$: sample data representation of $\bold{x}$ in the latent space</li>
+		<li> $\bold{v}$: sample label in the latent space</li>
+	</ul>
+
+	<figure style="text-align:center; margin-top:0.0em;">
+		<img src="figures/images/illustration_PLDA.png" width="45%">
+		<!-- <caption><span style="font-style: oblique;"><br>Projection results using LDA</span></caption> -->
+	</figure>
+	</section>
+
+	<section>
+		<h1>Learning the model parameters $\Theta = (\bold{m}, \bold{D}, \bold{A}) (1/2)$</h1>
+		<h2>Notations</h2>
+		<ul>
+			<li>$D_k$: dataset which contains samples from $k^{\text{th}}$ class</li>
+			<li>$\bold{x}_k^i$: $i^{\text{th}}$ from the $k^{th}$ class</li>
+			<li>We assume we have $n$ examples for each class and denote $\bold{X} = \{\bold{x}_{k}^{i}\}_{k,i=1}^{K,n}$</li>
+		</ul>
+
+		<h2>Log-likelihood (LL)</h2>
+		With $\small\overline{\bold{x}}_k=\frac{1}{n} \sum_{i=1}^n \bold{x}_k^i, S_w =
+		 \left(\sum_{i=1}^n\left(\bold{x}_k^i-\bar{\bold{x}}_k\right)\left(\bold{x}_k^i-\bar{\bold{x}}_k\right)^\top\right),
+		  S_b = \left(\overline{\bold{x}}_k-\bold{m}\right)\left(\overline{\bold{x}}_k-\bold{m}\right)^\top$
+		the LL $\mathcal{L}(\bold{X} \mid \Theta)$ is:
+		<center>
+			$$
+			\begin{aligned}
+			\mathcal{L}(\bold{X} \mid \Theta) &= \sum_{k=1}^{K}\log(p(\bold{x}_k^1,\dots, \bold{x}_k^n)) \\
+			&= -\frac{c}{2}\left[\ln \left|\Phi_b+\frac{\Phi_w}{n}\right|+\operatorname{tr}\left(\left(\Phi_b+\frac{\Phi_w}{n}\right)^{-1} S_b\right)+(n-1) \ln \left|\Phi_w\right|+n \operatorname{tr}\left(\Phi_w^{-1} S_w\right)\right]
+			\end{aligned}
+			$$
+		</center>
+	</section>
+	<section>
+		<h1>Learning the model parameters $\Theta = (\bold{m}, \bold{D}, \bold{A}) (2/2)$</h1>
+		<ul>
+			<li>we need to check when the derivatives vanished along parameters.</li>
+			<li>we have positive semi-definite and positive definite conditions on $\bold{\Phi}_b,\bold{\Phi}_w$</li>
+		</ul>
+		<p>We get the following solution to such optimization problem:</p>
+		<div class="exemple" style="margin-bottom:1em;"> 
+			<div id="title"> PLDA Optimization (aka. training)</div>
+			<ol>
+				<li>Compute $S_b, S_w$</li>
+				<li>Compute $W$ such that $S_b\bold{w} = \lambda S_w \bold{w}$</li>
+				<li>Compute the covariance matrices in the latent space:
+					$\\ \qquad \quad \rightarrow \Lambda_b = W^\top S_b W$
+					$\\ \qquad \quad \rightarrow \Lambda_w = W^\top S_w W$
+				</li>
+				<li>
+					compute $\bold{m} = \frac{1}{Kn}\sum_{k,i=1}^{K,n}\bold{x}_{k}^{i},
+					 \bold{A}=W^{-\top}\left(\frac{n}{n-1} \Lambda_w\right)^{1 / 2}, \\
+					 \qquad \quad \bold{D}=\max \left(0, \frac{n-1}{n}\left(\Lambda_b / \Lambda_w\right)-\frac{1}{n}\right) $
+				</li>
+				<li>keep the largest element of $D$ and set the others to zero.</li>
+				<li>$\bold{u}= \bold{A}^{-1}(\bold{x}-\bold{m})$ is the feature in the latent space.</li>
+			</ol>
+		</div>
+	</section>
+	<section>
+		<h1>Inference on the Latent space</h1>
+		Now that we have a trained model, we can do inference meaning for instance check which speaker a feature belongs to.
+		<ul>
+			<li>Let consider $\bold{u}^{\text{g}}$ from the training set (obtained through $\bold{u}^{\text{g}} = \bold{A}^{-1}(\bold{x}^{\text{g}} - \bold{m})$ ).</li>
+			<li>Consider a probe example $\bold{u}^{\text{p}}$ (obtained through $\bold{u}^{\text{p}} = \bold{A}^{-1}(\bold{x}^{\text{p}} - \bold{m})$ )</li>
+			<li>We aim to compute $C = \underset{g}{\text{argmax}}(P(\bold{u}^{\text{p}} \mid \bold{u}^{\text{g}}))$ the most probable class</li>
+		</ul>
+		A close formula of $P(\bold{u}^{\text{p}} \mid \bold{u}^{\text{g}})$ is given:
+		<center>
+			$$
+			P\left(\bold{u}^{\text{p}} \mid \bold{u}^{\text{g}}\right)=\mathcal{N}\left(\bold{u}^{\text{p}} \left\lvert\, \frac{\bold{D}}{\bold{D}+I} \bold{u}^{\text{g}}\right., I+\frac{\bold{D}}{\bold{D}+I}\right)
+			$$
+		</center>
+		<b>Remark:</b> a multi-training example  for the same class $k$ can be extended. Let say we have $n_k$ training examples 
+		$\bold{u}_k^1, \dots, \bold{u}_k^{n_k}$ then with $\bar{\bold{u}}_k = \frac{1}{n_k}\sum_{n=1}^{n_k}\bold{u}_k^{n}$ we have:
+		<center>
+			$$
+			P\left(\bold{u}^{\text{p}} \mid \bold{u}_k^{1, \dots, n_k}\right)
+			=\mathcal{N}\left(\bold{u}^{\text{p}}
+			\left\lvert\, \frac{n_k\bold{D}}{n_k\bold{D}+I} \bar{\bold{u}}_k\right.,
+			 I+\frac{n_k\bold{D}}{n_k\bold{D}+I}\right)
+			$$
+		</center>
+	</section>
+	<section>
+		<h1>Hypothesis Testing</h1>
+		<b>Goal:</b> test if two set of samples are in the same class or not.
+		<ul>
+			<li>Let's denote $\bold{u}^{\text{p}}=\{\bold{u}_{\text{p}}^{1 \dots m}\}, \bold{u}^{\text{g}}=\{\bold{u}_{\text{g}}^{1 \dots m}\}$</li>
+			<li>Then we define the likelihood ratio as:
+				<center>
+				$$
+					R(\bold{u}^{\text{p}}, \bold{u}^{\text{g}})
+					=  \frac{P(\bold{u}^{\text{p}}, \bold{u}^{\text{g}})}
+					{P(\bold{u}^{\text{p}})P(\bold{u}^{\text{g}})}
+					=\frac{\text{LL(same)}}{\text{LL(diff)}}
+					$$
+				</center>
+			</li>
+			<li>
+				One can shows that $log(R) =
+				 \log(P(\bold{u}^{\text{p}}, \bold{u}^{\text{g}})) 
+				- \log(P(\bold{u}^{\text{p}})) - \log(P(\bold{u}^{\text{g}}))$ can be computed (as product of pdf of Gaussian)
+			</li>
+			<li>
+				$\log(R)$ is called the <b>PLDA score</b>
+			</li>
+			<li>A PLDA scores matrix can be created and works as a similarty scores matrix for performing clustering.</li>
+		</ul>
+	</section>
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>III 1 - i-vectors</h2>
+
+	</section>
+	<section>
+	<h1>Universal background model GMM (UBM-GMM)</h1>
+	<ul>
+		<li>UBM: background model trained using speech from many speaker (in general a GMM)</li>
+		<li>target model trained using enrollment speech</li>
+		<li>Hypothesis  test as in PLDA</li>
+	</ul>	
+		<div class="affirmation"> 
+			However, we notice two big issues:
+			<ul>
+			<li>huge number of parameters to estimate (implies a lot of data)</li>
+			<li>sensitive to acoustic perturbation</li>
+			</ul>
+		</div>
+
+	</section>
+	<section>
+		<h1>Supervector & Joint Factor Analysis (JFA)</h1>
+		<ul>
+			<li>remember that a feature is assumed to be a GMM model. We denote $\bold{m}_1, \dots, \bold{m}_K$ their mean</li>
+			<li>We assume the same mean for an observation sequences of features $\mathcal{X}$</li>
+			<li>The feature is noisy and thus a less noisy representation should be proposed</li>
+			<li>JFA assume that we can concatenate the means as a <b>supervector </b> $\mathcal{M} = [\bold{m}_1, \dots, \bold{m}_K]^{\top}$ as:
+			<center>
+				$$
+					\mathcal{M} = \underbrace{\bold{m} + \bold{Vy} + \bold{Dz}}_{\text{speaker dependent supervector}} + \underbrace{\bold{Ux}}_{\text{channel dependent supervector}}
+				$$
+			</center>
+			$\quad \rightarrow \bold{m}$: speaker and channel independent supervector $\\$
+			$\quad \rightarrow \bold{V}$: rectangular matrix of low-rank (eigenvoices-speaker space) $\\$
+			$\quad \rightarrow \bold{D}$: diagonal matrix $\\$
+			$\quad \rightarrow \bold{x, y,z}$: standarized normal distribution $\\$
+			$\quad \rightarrow \bold{V}$: rectangular matrix of low-rank (eigenchannels-channel space) $\\$
+
+	
+		</li>
+		<div class="affirmation"> Experiments shows that the channel factor may 
+			contain speaker information. 
+			We then need an intermediate vector (i-vector) to extract more speaker information</div>
+		</ul>
+	</section>
+	<section>
+		<h1>JFA reformulation</h1>
+		<ul><li>A simpler model is then proposed:
+			<center>
+			$$
+			\mathcal{M} = \boldsymbol{\mu} + \bold{\Phi h} + \boldsymbol{\epsilon}
+			$$
+		</center></li>
+		<li>$\bold{\Phi}$: rectangular and low rank (total variability matrix)</li>
+		<li>$\bold{h}$: standard Normal distribution (total factor)</li>
+		<li>$\bold{\epsilon}$: noise component with $\boldsymbol{\epsilon} \sim \mathcal{N}(0, \Sigma\triangleq \mathrm{Diag}(\{\Sigma_c\}_{c=1}^{C}))$</li>	
+	</ul>
+	<figure style="text-align:center; margin-top:0.0em;">
+		<img src="figures/images/FA_i_vectors.png" width="30%">
+		<caption><span style="font-style: oblique;"><br>JFA with a common $\bold{h}$ (taken from <a href="https://hal.science/tel-01927863/document"> this HDR manuscript</a>)</span></caption> 
+	</figure>
+	</section>
+	<section>
+		<h1>i-vector</h1>
+        <ul><li>
+			Given the total variability model (TVM):
+			<center>
+				$$
+				\mathcal{M} = \boldsymbol{\mu} + \bold{\Phi h} + \boldsymbol{\epsilon}
+				$$
+			</center>
+		</li>
+		<li> and an observed sequence $\mathcal{X}\triangleq\{\bold{x}_t\}_{t=1}^{T}$ of size $T$</li>
+		<li>$\bold{i}^{(\mathcal{X})} \triangleq \mathbb{E}[\bold{h} \mid \mathcal{X}]$ is called the <b>i-vector</b></li>
+		<li>if we have $2000$ features ($\approx$ 20s of speech) of size $50$. The standard size of a i-vector is $500$.</li>
+		<li>meaning we have a compression rate of $  5 \times 10^{-3}$  </li>
+	</ul>
+	<div class="remarque">
+		The TVM estimation consists of finding $\boldsymbol{\mu}, \bold{\Phi}, \boldsymbol{\Sigma}$. 
+		An Expectation-Maximization (EM) algorithm is used for that purpose.
+	</div>
+	</section>
+
+	<section>
+		<h1>Occupation of the observation</h1>
+		<ul>
+			<li>$\gamma_{t,c}:$ occupation of the observation $\bold{x}_t \in \mathbb{R}^{L}$ for the Gaussian $c$:
+				<center>
+				$$
+				
+					\gamma_{t,c} = \frac{\mathcal{N}(\bold{x}_t \mid \boldsymbol{\mu}_c, \boldsymbol{\Sigma}_c)}{\sum_{c^\prime=1}^{C} \mathcal{N}(\bold{x}_t \mid \boldsymbol{\mu}_{c^\prime}, \boldsymbol{\Sigma}_{c^\prime})}
+				
+				$$
+			</center>
+			</li>
+			<li>at each iteration, $\gamma_{t,c}$ determines the weight of $\bold{x}_t$ in the estimation of $(\boldsymbol{\mu_c}, \bold{\Phi}_c, \boldsymbol{\epsilon}_c)$</li>
+			<li>more interesting (because $\bold{h}$ is shared among an observation sequence), 
+				we consider the sum of the occupation (aka. order 0 statistic)
+				 and the weighted-sum of the observation (aka. order 1 statistic):
+				<center>
+					$
+					\begin{aligned}
+					n_c^{(\mathcal{X})} &= \frac{1}{T}\sum_{t=1}^{T}\gamma_{t,c} \\
+					\bold{f}_c^{(\mathcal{X})} &= \frac{1}{T}\sum_{t=1}^{T}\gamma_{t,c}\bold{x}_t
+					\end{aligned}
+					$
+				</center>
+
+			</li>
+			<li>We denote $\bold{f}^{(\mathcal{X})} = \left[\bold{f}_c^{(\mathcal{X})}\right]_{c=1}^{C} \in \mathbb{R}^{CL},
+				 \bold{n}^{(\mathcal{X})} = \left[n_c^{(\mathcal{X})}\right]_{c=1}^{C} \in \mathbb{R}^{C}$</li>
+		</ul>
+	</section>
+	<section>
+		<h1>EM algorithm in a nutshell</h1>
+		<ul>
+			<li>$\bold{n}^{(\mathcal{X})}, \bold{f}^{(\mathcal{X})}$ depends on the UBM (or PLDA) parameters </li>
+			<li>In practice, $\boldsymbol{\mu, \Sigma}$ are fixed by the UBM model. Only $\bold{\Phi}$ is updated.</li>
+		</ul>
+		<h2>E-Step</h2>
+		It can be shown (not trivial at all) that the E-step corresponds to:
+		<center>
+			$
+			\begin{aligned}
+			\bold{i}^{(\mathcal{X})} &\triangleq
+			 \mathbb{E}(\bold{h} \mid \mathcal{X})
+			  &= 
+			 (\bold{I}_d+\bold{\Phi} \bold{n}^{(\mathcal{X})} \boldsymbol{\Sigma}^{-1} \bold{\Phi} )^{-1}\bold{\Phi}^\top\boldsymbol{\Sigma}^{-1}\bold{f}^{(\mathcal{X})} \\
+			 \bold{v}^{(\mathcal{X})} 
+			 &\triangleq \mathbb{E}(\bold{h}^\top \bold{h} \mid \mathcal{X})
+			 &=(\bold{I}_d+\bold{\Phi} \bold{n}^{(\mathcal{X})} \boldsymbol{\Sigma}^{-1} \bold{\Phi} )^{-1} + \bold{i}^{(\mathcal{X})} (\bold{i}^{(\mathcal{X})}) ^\top
+
+			\end{aligned}
+			 $
+		</center>
+		We accumulate for $R$ observations $\mathcal{X}_1, \dots, \mathcal{X}_R$ the following statistics:
+
+		<center>
+			$
+			\begin{aligned}
+			\bold{C} = \sum_{r=1}^{R}\bold{i}^{(\mathcal{X}_r)}\bold{f}^{(\mathcal{X}_r)}; \qquad
+			\bold{A}_c = \sum_{r=1}^{R} n_c^{(\mathcal{X_r})}\bold{v}^{(\mathcal{X}_r)} 
+			\end{aligned}
+			 $
+		</center>
+		<h2>M-Step</h2>
+		Compute  $\bold{\Phi}$ with $\bold{A}$ the concatenation of matrices $\bold{A}_c$:
+		<center>
+			$$
+			 \bold{\Phi} = \bold{CA}^{-1}
+			$$
+		</center>
+	</section>
+
+	<section>
+		<h1>Summarize for i-vector</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/summarize_ivec.png" width="90%">
+			<!-- <caption><span style="font-style: oblique;"><br>JFA with a common $\bold{h}$ (taken from <a href="https://hal.science/tel-01927863/document"> this HDR manuscript</a>)</span></caption>  -->
+		</figure>
+	</section>
+
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>IV 1 - X-vectors</h2>
+
+	</section>
+	<section>
+		<h1>Motivations and history</h1>
+		<ul>
+			<li>Inspired by i-vectors but with a DNN architecture</li>
+			<li>2014: hybrid approaches (DNN + statistical model)</li>
+			<li>2018: full neural extractor: X-vector $\texttt{[Sny. 18]}$</li>
+		</ul>
+
+		<div class="references" style="margin-top:1em;">
+			<ul>
+				<li>Snyder, D., et al. <span style="font-style: oblique;"> X-Vectors: Robust DNN Embeddings for Speaker Recognition. </span> ICASSP (2018)</li>
+			</ul>
+		</div>	
+	</section>
+
+	<section>
+		<h1>Global pipeline of speaker extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/summary_speaker_extractor.png" width="90%">
+			<!-- <caption><span style="font-style: oblique;"><br>JFA with a common $\bold{h}$ (taken from <a href="https://hal.science/tel-01927863/document"> this HDR manuscript</a>)</span></caption>  -->
+		</figure>
+		<ul>
+			<li>waveform transformed into a sequence of vectors (MFCC)</li>
+			<li>sequence processed to refine the desired speaker information (Seq. to seq)</li>
+			<li>information gathered into a fixed length representation FLR (pooling)</li>
+			<li>optimisation of the FLR for close-sset identification </li>
+			<li>trained using CrossEntropy Loss</li>
+			<li>the desired feature is used for speaker characteristic extraction</li>
+		</ul>
+	</section>
+	<section>
+		<h1>Architecture of the X-vector extractor</h1>
+		<div class="multiCol">
+			<div class="col">
+				<figure style="text-align:center; margin-top:0.0em;">
+					<img src="figures/images/x-vectors_architecture.png" width="60%">
+					<caption><span style="font-style: oblique;"><br>X-vector architecture image taken from <a href="https://hal.science/hal-03262914/document"> here</a></span></caption>
+				</figure>
+			</div>
+			<div class="col">
+				<ul>
+					<li>production of MFCCs</li>
+					<li>sequence of frames processed through a Time Delay Neural Network (TDNN)</li>
+					<li>Pooling with a mean and standard deviation computation</li>
+					<li>Softmax after feed-forward layers</li>
+					<li>The loss used is the CrossEntropy</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_1.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_2.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_3.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_4.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_5.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_6.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_7.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_8.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_9.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_10.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_11.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_12.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_13.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Sequence processing of the X-vector extractor</h1>
+		<figure style="text-align:center; margin-top:0.0em;">
+			<img src="figures/images/seq2seq_tdnn/seq2seq_tdnn_14.png" width="80%">
+			<caption><span style="font-style: oblique;"><br>Image taken from Anthony Larcher (Prof. at LIUM Le Mans) Course</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Statistic pooling</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/meanstdpooling.png" width="65%">
+			<caption><span style="font-style: oblique;"><br>Mean Standard Pooling of embedding (taken from Prof. Larcher course)</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Results compare to i-vector</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/results_x-vectors.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>x-vectors results from $\texttt{[Sny. 18]}$</span></caption>
+		</figure>
+		<aside class="notes">
+			<ul>
+				<li>SITW: native english speaker with noise,  reverberation and so on</li>
+				<li>SRE16: Cantonee conversational telephone speech</li>
+				<li>equal-error-rate (EER): erreur en reconnaissance</li>
+				<li> DCF10: speaker verification</li>
+			</ul>
+		</aside>
+	</section>
+
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>IV 2 - r-vectors</h2>
+
+	</section>
+	<section>
+		<h1>Motivations</h1>
+		<ul>
+			<li>Make use of ResNet architecture on spectrogram</li>
+			<li>Find something better than basic statistic pooling</li>
+		</ul>
+	</section>
+	<section>
+		<h1>r-vector summary</h1>
+
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/r-vector_summary.png" width="100%">
+		</figure>
+		<ul>
+			<li>Make use of a ResNet $\texttt{[He. 16]}$ architecture on spectrograms</li>
+			<li>use attentive pooling</li>
+			<li>Linear layer to get the r-vector </li>
+			<li>Additive Angular Margin Loss to be more discriminant</li>
+		</ul>
+
+		<div class="references">
+			<ul>
+				<li>He, K. et al.  <span style="font-style: oblique;"> Deep Residual Learning for Image Recognition. </span> CVPR (2016)</li>
+
+			</ul>
+		</div>
+	</section>
+	<section>
+		<h1>r-vector summary</h1>
+
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/r-vector_summary.png" width="100%">
+		</figure>
+		<ul>
+			<li>Make use of a ResNet $\texttt{[He. 16]}$ architecture on spectrograms</li>
+			<li style="color:red;">use attentive pooling</li>
+			<li>Linear layer to get the r-vector </li>
+			<li>Additive Angular Margin Loss to be more discriminant</li>
+		</ul>
+
+		<div class="references">
+			<ul>
+				<li>He, K. et al.  <span style="font-style: oblique;"> Deep Residual Learning for Image Recognition. </span> CVPR (2016)</li>
+
+			</ul>
+		</div>
+	</section>
+	<section>
+		<h1>Remember of Statistic pooling</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/meanstdpooling.png" width="65%">
+			<caption><span style="font-style: oblique;"><br>Mean Standard Pooling of embedding (taken from Prof. Larcher course)</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Improvement: attentive pooling</h1>
+		<ul>
+			<li>All frames don't have the same importance</li>
+		</ul>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/better_meanstdpooling.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>Attentive Pooling of embedding (taken from Prof. Larcher course)</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Improvement: attentive pooling</h1>
+		<ul>
+			<li>All frames don't have the same importance</li>
+		</ul>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/better_meanstdpooling.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>Attentive Pooling of embedding (taken from Prof. Larcher course)</span></caption>
+		</figure>
+
+		<div class="remarque" style="margin-top:0.5em;">Do you have example where some embedding are more important ?</div>
+	</section>
+
+	<section>
+		<h1>Mean/Std attentive pooling</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/arch_attentitvepooling.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>Architecture of a mean/std attentive pooling</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>r-vector summary</h1>
+
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/r-vector_summary.png" width="100%">
+		</figure>
+		<ul>
+			<li>Make use of a ResNet $\texttt{[He. 16]}$ architecture on spectrograms</li>
+			<li>use attentive pooling</li>
+			<li>Linear layer to get the r-vector </li>
+			<li  style="color:red;">Additive Angular Margin Loss to be more discriminant</li>
+		</ul>
+
+		<div class="references">
+			<ul>
+				<li>He, K. et al.  <span style="font-style: oblique;"> Deep Residual Learning for Image Recognition. </span> CVPR (2016)</li>
+
+			</ul>
+		</div>
+	</section>
+	<section>
+		<h1>AAM Loss: Motivation</h1>
+		<ul>
+			<li>Goal: create a margin zone for a better discrimination</li>
+		</ul>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/softmax_motivation.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>Original softmax vs AAM Loss (taken from Prof. Larcher course)</span></caption>
+		</figure>
+
+	</section>
+
+	<section>
+		<h1>Why a AAM loss ?</h1>
+		<ul>
+			<li>Softmax $\rightarrow$ no consideration of margin boundary</li>
+			<li>Can be ok for identification but bad when some classes are unknown at training time</li>
+		</ul>
+		<div class="remarque" style="margin-top:0.5em;">Margin: easy to generalize and make the class more compact</div>
+
+	</section>
+	<section>
+		<h1>Let's recall the softmax Loss</h1>
+		<ul>
+			<li>Softmax activation + CrossEntropy (CE)</li>
+			<li>Exponential in Softmax used to get positive values</li>
+		</ul>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/softmax_loss.png" width="85%">
+			<caption><span style="font-style: oblique;"><br>Softmax loss (taken from Prof. Larcher course)</span></caption>
+		</figure>
+	</section>
+	<section>
+		<h1>Large Margin Softmax (L-Softmax) $\texttt{[Liu. 16]}$</h1>
+		<ul>
+			<li>Introduces a margin into the Softmax Loss</li>
+			<li>now we abusively say "Softmax Loss" as the last FCL together with Softmax/CE:
+				<center>$$
+				L=\frac{1}{N}\sum_{i=1}^{N}L_i = \frac{1}{N}\sum_{i=1}^{N}-\log\left(\frac{e^{g_{y_i}}}{\sum_{j}e^{g_{j}}}\right)
+				$$</center>
+				$\quad \rightarrow N$: number of training data $\\$
+				$\quad \rightarrow g$: output of the last FCL of a network $\\$
+				$\quad \rightarrow \bold{x}_i, y_i$: $i^{th}$ input feature with the label $y_i$ $\\$
+				$\quad \rightarrow s_j, j   \in \llbracket 1, K\rrbracket:$  $j^{th}$ element of the class score vector $\bold{g}$ with $K$ classes.
+			</li>
+		</ul>
+	</section>
+
+	<section>
+		<h1>Softmax with FCL (1/2)</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/softmax_loss_plus_linear.png" width="95%">
+			<caption><span style="font-style: oblique;"><br>Softmax loss withe the last FCL (taken from Prof. Larcher course)</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Softmax with FCL (2/2)</h1>
+		<ul>
+			<li>Let assume a last FCL without bias:
+				<center>
+				$$
+				\begin{aligned}
+				g_{y_i} &= \bold{w}_{y_i}^{\top} \bold{x}_i \\
+				\end{aligned}
+				$$
+			</center>
+			with $\bold{w}_{y_i}$ is the $i^{th}$ column of $\bold{W}$ and $.$ the inner product.
+			</li>
+			<li>It is equivalent to:
+				<center>
+					$$
+					\begin{aligned}
+					g_j &= \|\bold{w}_j\| \|\bold{x}_i\|\cos(\theta_j) \\
+					\end{aligned}
+					$$
+				</center>
+			</li>
+			<li>
+				The loss can then be rewritten as:
+				<center>
+					$$
+					\begin{aligned}
+					L_i &= -\log\left(\frac{e^{\|\bold{w}_{y_i}\| \|\bold{x}_i\|\cos(\theta_{y_i})}}{\sum_j e^{\|\bold{w}_j\| \|\bold{x}_i\|\cos(\theta_j)}}\right)\\
+					\end{aligned}
+					$$
+				</center>
+			</li>
+		</ul>
+	</section>
+	<section>
+		<h1>From Softmax</h1>
+		<ul>
+			<li>Let assume a two class problem and $\bold{x}$ belongs to the class $1$</li>
+			<li>Then the softmax requires $\bold{w}_1.\bold{x} > \bold{w}_2.\bold{x}$</li>
+			<li> this is equivalent to $ \|\bold{w}_1\| \|\bold{x}\|\cos(\theta_1) > \|\bold{w}_2\| \|\bold{x}\|\cos(\theta_2)$ </li>
+			<figure style="text-align:center; margin-top:0.8em;">
+				<img src="figures/images/softmax_intuition.png" width="55%">
+				<caption><span style="font-style: oblique;"><br>Detail of the Softmax Loss (taken from Prof. Larcher course)</span></caption>
+			</figure>
+		</ul>
+	</section>
+	<section>
+		<h1>To Large Margin Softmax (L-Softmax)</h1>
+		<ul>
+			<li>we can add a margin $m$ as follow:
+				<center>
+					$$
+					$ \|\bold{w}_1\| \|\bold{x}\|\cos({\color{red} m}\theta_1) > \|\bold{w}_2\| \|\bold{x}\|\cos(\theta_2)$
+					$$
+				</center>
+
+			</li>
+			<figure style="text-align:center; margin-top:0.8em;">
+				<img src="figures/images/softmax_L_margin.png" width="55%">
+				<caption><span style="font-style: oblique;"><br>L-Softmax (taken from Prof. Larcher course)</span></caption>
+			</figure>
+		</ul>
+	</section>
+	<section>
+		<h1>Angular Softmax (A-Softmax)</h1>
+		<ul>
+			<li>A-Softmax: very similar to L-Softmax but with $\bold{W}$ normalized</li>
+			<li>Then
+				<center> $$\|\bold{w}_1\| \|\bold{x}\|\cos({\color{red} m}\theta_1) > \|\bold{w}_2\| \|\bold{x}\|\cos(\theta_2)
+					$$
+				</center>
+				becomes
+				
+				<center> $$\cos({\color{red} m}\theta_1) >  \cos(\theta_2)$$
+				</center>
+		</li>
+		</ul>
+	</section>
+
+	<section>
+		<h1>Additve Margin Softmax (AM-Softmax)</h1>
+		<ul>
+			<li>AM-Softmax: uses an additive margin</li>
+			<li>Then
+				<center> $$
+					\mathcal{L}_{AMS} = -\frac{1}{N}\sum_{i=1}^{N}\log\frac{e^{s.(\bold{w}_{y_i}^{\top}\bold{x}_i - {\color{red} m})}}
+					{e^{s.(\bold{w}_{y_i}^{\top}\bold{x}_i - {\color{red} m})} + \sum_{j=1, j \neq y_i}^{K} e^{s.(\bold{w}_{j}^{\top}\bold{x}_i)}}
+					$$
+				</center>
+
+		</li>
+		</ul>
+	</section>
+	<section>
+		<h1>AAM-Softmax</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/A_softmax.png" width="100%">
+			<caption><span style="font-style: oblique;"><br>AAM-Softmax. $\lambda, s$ corresponds to parameter on the cosine distance</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Performance of r-vectors</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/results_r-vectors.png" width="100%">
+			<caption><span style="font-style: oblique;"><br>results of r-vectors for speaker verification</span></caption>
+		</figure>
+	</section>
+
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>IV 3 - ECAPA-TDNN</h2>
+	</section>
+
+	<section>
+		<h1>Motivations</h1>
+		<ul>
+			<li>Extend the temporal attention mechanisms to the channel dimensions</li>
+			<li>Take advantage of Multi-Layer feature Aggregation (MFA)</li>
+			<li>MFA: information conveyed at different stages of the network</li>
+		</ul>
+	</section>
+
+	<section>
+		<h1>Block of ECAPA-TDNN</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/ecapa_tdnn_detail.png" width="40%">
+			<caption><span style="font-style: oblique;"><br>Details of ECAPA-TDNN architecture</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>Results of ECAPA-TDNN</h1>
+		<figure style="text-align:center; margin-top:0.8em;">
+			<img src="figures/images/results_ecapa_tdnn.png" width="90%">
+			<caption><span style="font-style: oblique;"><br>ECAPA-TDNN results</span></caption>
+		</figure>
+	</section>
+
+	<section>
+		<h1>More details</h1>
+		<ul>
+			<li>The model perform better with pre-trained models (WavLM, Wav2Vec2.0 ...)</li>
+			<li>However, those models are huge ! (ECAPA-TDNN lite exists)</li>
+			<li>difficulty to adapt the pre-trained models</li>
+		</ul>
+	</section>
+	<section>
+		<h1>Others informations</h1>
+		<ul>
+			<li>Data augmentation is necessary (noise, reverb, masking ...)</li>
+			<li>Training strategy (scheduler, warm-up, learning rate ...)</li>
+		</ul>
+	</section>
+
+	<section class="cover" data-background="figures/background-no.jpg" data-state="no-title-footer no-progressbar has-dark-background">
+		<h2 id='coverh2'>V - Conclusion</h2>
+	</section>
+	<section>
+		<h1>Take Home Message</h1>
+		<ul>
+			<li>from statistical (i-vector) to DNN (X-vector)</li>
+			<li>either statistical approach (PLDA) or distance (CosSim) for identification </li>
+			<li>inspiration from images data</li>
+			<li>improvement of loss for getting something more discriminant</li>
+		</ul>
+	</section>
+</div>
+
+
+
+<div class='footer'>
+	<img src="css/theme/img/logo-Telecom.svg" alt="Logo"/>
+	<div id="middlebox">Speaker Recognition Introduction</div>
+	<ul>
+	</ul>
+</div>
+			</div>
+
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: false,
+				slideNumber: true,
+				minScale: 0.1,
+				maxScale: 5,
+				transition: 'none', //
+
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/math-katex/math-katex.js', async: true },
+					{ src: 'plugin/reveald3/reveald3.js' },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+
+	</body>
+
+</html>
